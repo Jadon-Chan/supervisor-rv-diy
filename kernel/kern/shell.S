@@ -20,23 +20,35 @@ uregs:
      */
 SHELL:
     // 读操作符
-    jal READ_SERIAL
+    # jal READ_SERIAL
 
     // 根据操作符进行不同的操作
-    li t0, 'R'
-    beq a0, t0, .OP_R
-    li t0, 'D'
-    beq a0, t0, .OP_D
-    li t0, 'A'
-    beq a0, t0, .OP_A
-    li t0, 'G'
-    beq a0, t0, .OP_G
-    li t0, 'T'
-    beq a0, t0, .OP_T
+    # li t0, 'R'
+    # beq a0, t0, .OP_R
+    # li t0, 'D'
+    # beq a0, t0, .OP_D
+    # li t0, 'A'
+    # beq a0, t0, .OP_A
+    # li t0, 'G'
+    # beq a0, t0, .OP_G
+    # li t0, 'T'
+    # beq a0, t0, .OP_T
 
     // 错误的操作符，输出 XLEN，用于区分 RV32 和 RV64
-    li a0, XLEN
+    # li a0, XLEN
     // 把 XLEN 写给 term
+    # jal WRITE_SERIAL
+
+    // 操作 - 跳转到用户程序执行
+    // 获取 addr
+    # jal READ_SERIAL_XLEN
+    // 保存到 s10
+    # mv s10, a0
+    la s10, .USER_PROGRAM
+
+    // 写开始计时信号
+    // 告诉终端用户程序开始运行
+    li a0, SIG_TIMERSET
     jal WRITE_SERIAL
     j .DONE
 
@@ -347,3 +359,6 @@ USERRET_MACHINE:
 .DONE:
     // 交互循环
     j SHELL
+.USER_PROGRAM:
+    // 用户程序
+    addi t0, t0, 1
