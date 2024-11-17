@@ -16,7 +16,7 @@ OBJ	:= $(patsubst $(SRCDIR)/%.S, $(OBJDIR)/%.o, $(SRC))
 TARGET	:= kernel.elf
 ASFLAGS	:= -D__ASSEMBLY__ -g -fno-pic
 ifeq ($(BITS), 32)
-	ASFLAGS += -march=rv32i -mabi=ilp32 -DRV32
+	ASFLAGS += -march=rv32i_zicsr -mabi=ilp32 -DRV32
 	QEMU := qemu-system-riscv32
 	LDSCRIPT	:= kern/kernel32.ld
 else
