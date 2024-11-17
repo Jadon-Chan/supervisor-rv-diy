@@ -340,4 +340,4 @@ USERRET_MACHINE:
 
 .DONE:
     // 交互循环
-    j .DONE
+    j SHELL
