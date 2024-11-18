@@ -335,9 +335,13 @@ USERRET_MACHINE:
 
 .USER_PROGRAM:
     // 用户程序
-    addi t0, t0, 1
-    ret
+    li s0, 30
+    li a0, 0x4F              // 'O'
+    ecall
+    li a0, 0x4B              // 'K'
+    ecall
+    jr ra
 
 .DONE:
     // 交互循环
-    j .DONE
+    j SHELL
