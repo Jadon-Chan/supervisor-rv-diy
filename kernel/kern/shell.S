@@ -123,22 +123,31 @@ SHELL:
 #     j .DONE
 
 # .OP_A:
-#     // 操作 - 写入内存 num 字节，num 为 4 的倍数
-#     // 保存 s1, s2
-#     addi sp, sp, -2*XLEN
-#     STORE s1, 0(sp)
-#     STORE s2, 4(sp)
+    // 操作 - 写入内存 num 字节，num 为 4 的倍数
+    // 保存 s1, s2
+    # addi sp, sp, -2*XLEN
+    # STORE s1, 0(sp)
+    # STORE s2, 4(sp)
 
-#     // 获得 addr
-#     jal READ_SERIAL_XLEN
-#     or s1, a0, zero
+    // 设置 t1 为 0x80100000
+    lui t1, 0x80100
 
-#     // 获得 num
-#     jal READ_SERIAL_XLEN
-#     or s2, a0, zero
+    // 设置 t2 为 0x8067 (ret 指令)
+    lui t2, 0x8
+    addi t2, t2, 0x67
 
-#     // num 除 4，获得字数
-#     srl s2, s2, 2
+    sw t2, 0(t1)
+
+    // 获得 addr
+    # jal READ_SERIAL_XLEN
+    # or s1, a0, zero
+
+    // 获得 num
+    # jal READ_SERIAL_XLEN
+    # or s2, a0, zero
+
+    // num 除 4，获得字数
+    # srl s2, s2, 2
 
 # .LC3:
 #     // 每次写入一字
@@ -155,18 +164,23 @@ SHELL:
 #     fence.i
 # #endif
 
-#     // 恢复 s1, s2
-#     LOAD s1, 0(sp)
-#     LOAD s2, XLEN(sp)
-#     addi sp, sp, 2*XLEN
-#     j .DONE
+    // 恢复 s1, s2
+    # LOAD s1, 0(sp)
+    # LOAD s2, XLEN(sp)
+    # addi sp, sp, 2*XLEN
+    # j .DONE
 
     // 操作 - 跳转到用户程序执行
     // 获取 addr
     # jal READ_SERIAL_XLEN
     // 保存到 s10
     # mv s10, a0
-    la s10, .USER_PROGRAM
+
+    // 设置 s10 为 0x80100000
+    lui s10, 0x80100
+
+    // My way to jump to user program
+    # la s10, .USER_PROGRAM
 
     // 写开始计时信号
     // 告诉终端用户程序开始运行
