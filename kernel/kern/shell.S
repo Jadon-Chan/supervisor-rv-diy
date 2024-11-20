@@ -335,12 +335,13 @@ USERRET_MACHINE:
 
 .USER_PROGRAM:
     // 用户程序
-    li s0, 30
-    li a0, 0x4F              // 'O'
-    ecall
-    li a0, 0x4B              // 'K'
-    ecall
-    jr ra
+    // 将 ret 指令写入 0x80100000 地址
+    lui t0, 0x8
+    addi t0, t0, 0x67
+    lui t1, 0x80100
+    sw t0, 0(t1)
+    // 跳转到 0x80100000 地址
+    jr t1
 
 .DONE:
     // 交互循环
